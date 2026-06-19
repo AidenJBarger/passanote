@@ -1,4 +1,4 @@
-# Pass A Note Privacy Policy
+# Pass a Note Privacy Policy
 
 Last updated: June 2026
 
@@ -9,7 +9,7 @@ Last updated: June 2026
 - **No tracking.** No analytics, telemetry, or user tracking
 - **Open source.** You can verify these claims by reading our code
 
-## What Pass A Note Stores
+## What Pass a Note Stores
 
 ### On Your Device Only
 
@@ -27,7 +27,7 @@ The display name you choose. Stored only on your device and shared with peers yo
 
 ### Temporary Session Data
 
-During each session, Pass A Note temporarily maintains:
+During each session, Pass a Note temporarily maintains:
 
 - Active peer connections (forgotten when the app closes)
 - Routing information for message delivery across the mesh
@@ -36,9 +36,9 @@ During each session, Pass A Note temporarily maintains:
 
 ## What Is Shared
 
-### With Other Pass A Note Users
+### With Other Pass a Note Users
 
-When you use Pass A Note, nearby peers can see:
+When you use Pass a Note, nearby peers can see:
 
 - Your chosen nickname
 - Your peer ID
@@ -53,7 +53,7 @@ The main room is a local broadcast. Messages are visible to everyone nearby and 
 
 ## What We Don't Do
 
-Pass A Note never:
+Pass a Note never:
 
 - Collects personal information
 - Stores data on servers we operate
@@ -84,7 +84,7 @@ You have complete control:
 
 ## Bluetooth & Permissions
 
-Pass A Note requires Bluetooth permission to function:
+Pass a Note requires Bluetooth permission to function:
 
 - Used only for peer-to-peer communication
 - Bluetooth is not used for tracking
@@ -116,7 +116,7 @@ If we update this policy:
 
 ## Contact
 
-Pass A Note is an open source project. For privacy questions:
+Pass a Note is an open source project. For privacy questions:
 
 - View our source code: https://github.com/AidenJBarger/passanote
 - Open an issue on GitHub

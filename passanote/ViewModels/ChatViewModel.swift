@@ -87,12 +87,12 @@ final class ChatViewModel {
 
     /// Persist draft nickname while typing — does not commit or start Bluetooth.
     func updateNickname(_ name: String) {
-        CryptoIdentity.shared.nicknameDraft = name
+        CryptoIdentity.shared.nicknameDraft = NicknameInput.sanitized(name)
     }
 
     /// Commit the nickname and announce when the mesh is already running.
     func setNickname(_ name: String) {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = NicknameInput.sanitized(name.trimmingCharacters(in: .whitespacesAndNewlines))
         guard !trimmed.isEmpty else { return }
         CryptoIdentity.shared.nickname = trimmed
         CryptoIdentity.shared.nicknameDraft = trimmed

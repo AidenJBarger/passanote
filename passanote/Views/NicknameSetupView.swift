@@ -44,9 +44,10 @@ struct NicknameSetupView: View {
         Binding(
             get: { nickname },
             set: { newValue in
-                nickname = newValue
-                model.updateNickname(newValue)
-                syncNicknameToSpline(newValue)
+                let sanitized = NicknameInput.sanitized(newValue)
+                nickname = sanitized
+                model.updateNickname(sanitized)
+                syncNicknameToSpline(sanitized)
             }
         )
     }
@@ -80,7 +81,11 @@ struct NicknameSetupView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            nickname = model.nicknameForSetup
+            let setup = NicknameInput.sanitized(model.nicknameForSetup)
+            nickname = setup
+            if setup != model.nicknameForSetup {
+                model.updateNickname(setup)
+            }
         }
         .onChange(of: colorScheme) { _, scheme in
             guard sceneIsReady else { return }
