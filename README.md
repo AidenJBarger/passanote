@@ -1,10 +1,8 @@
 # Pass a Note
 
-A playful iOS app for passing messages to people nearby over a Bluetooth mesh.
+Pass messages to people nearby over a Bluetooth mesh.
 
-Inspired by the tech behind [bitchat](https://github.com/permissionlesstech/bitchat), redesigned to be beautiful.
-
-No accounts. No servers. Just notes.
+No internet. No signup. Just chat.
 
 ## Screenshots
 
@@ -16,10 +14,12 @@ No accounts. No servers. Just notes.
 
 ## Features
 
-- Securely message people nearby
+- Completely offline; more people, more range
+- Securely private message people nearby
 - Share images and files
-- Messages disappear when you close the app
-- @mention people in the room — get notified when someone mentions you
-- Completely offline — uses Bluetooth; more people, more range
+- Chats disappear when you close out of the app
+- @mention people and DM with notifications
+
+Inspired by the tech behind [BitChat](https://github.com/permissionlesstech/bitchat), redesigned to be beautiful.
 
 See [PRIVACY_POLICY.md](PRIVACY_POLICY.md) for how your data is handled.
