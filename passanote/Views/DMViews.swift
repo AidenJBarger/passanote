@@ -72,7 +72,7 @@ struct DMListView: View {
             }
             .buttonStyle(.plain)
 
-            NavigationLink(value: RoomRoute.privacyPolicy) {
+            Link(destination: PassANoteLinks.privacyPolicy) {
                 aboutRow("Privacy Policy")
             }
             .buttonStyle(.plain)

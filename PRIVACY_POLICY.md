@@ -111,7 +111,7 @@ Optional notification permission alerts you to new private messages when the app
 If we update this policy:
 
 - The "Last updated" date will change
-- The updated policy will be included in the app
+- The updated policy will be published on GitHub
 - No retroactive changes can make us collect data already held only in your app
 
 ## Contact

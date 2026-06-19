@@ -51,6 +51,8 @@ final class MeshService: NSObject {
     private let fragmentAssembler = FragmentAssembler()
     private var announceTimer: DispatchSourceTimer?
     private var isStarted = false
+    private var centralState: CBManagerState = .unknown
+    private var peripheralState: CBManagerState = .unknown
 
     // MARK: - Identity & Crypto
 
@@ -91,6 +93,47 @@ final class MeshService: NSObject {
 
     var isRunning: Bool {
         bleQueue.sync { isStarted }
+    }
+
+    /// Re-read manager states and push an update to the UI — useful after the
+    /// Bluetooth permission dialog, which sometimes skips delegate callbacks.
+    func refreshBluetoothState() {
+        bleQueue.async { [weak self] in
+            self?.refreshBluetoothStateLocked()
+        }
+    }
+
+    private func refreshBluetoothStateLocked() {
+        if let central = centralManager {
+            centralState = central.state
+        }
+        if let peripheral = peripheralManager {
+            peripheralState = peripheral.state
+        }
+        publishBluetoothStateLocked()
+
+        if combinedBluetoothStateLocked() == .poweredOn {
+            startScanning()
+            if characteristic != nil {
+                startAdvertising()
+            }
+        }
+    }
+
+    private func combinedBluetoothStateLocked() -> CBManagerState {
+        guard isStarted else { return .unknown }
+        let states = [centralState, peripheralState]
+        if states.contains(.unauthorized) { return .unauthorized }
+        if states.contains(.poweredOff) { return .poweredOff }
+        if states.contains(.unsupported) { return .unsupported }
+        if states.contains(.resetting) { return .resetting }
+        if centralState == .poweredOn, peripheralState == .poweredOn { return .poweredOn }
+        return .unknown
+    }
+
+    private func publishBluetoothStateLocked() {
+        let state = combinedBluetoothStateLocked()
+        notifyUI { delegate in delegate.mesh(didUpdateBluetoothState: state) }
     }
 
     private func startLocked() {
@@ -672,10 +715,10 @@ extension MeshService: CBCentralManagerDelegate {
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        let state = central.state
-        notifyUI { delegate in delegate.mesh(didUpdateBluetoothState: state) }
+        centralState = central.state
+        publishBluetoothStateLocked()
 
-        switch state {
+        switch central.state {
         case .poweredOn:
             startScanning()
         case .poweredOff, .unauthorized:
@@ -787,6 +830,9 @@ extension MeshService: CBPeripheralManagerDelegate {
     }
 
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+        peripheralState = peripheral.state
+        publishBluetoothStateLocked()
+
         switch peripheral.state {
         case .poweredOn:
             peripheral.removeAllServices()

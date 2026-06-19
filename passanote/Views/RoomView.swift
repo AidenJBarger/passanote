@@ -61,8 +61,6 @@ struct RoomView: View {
                         .navigationTransition(.zoom(sourceID: "nickname", in: nicknameTransition))
                     case .features:
                         FeaturesView()
-                    case .privacyPolicy:
-                        PrivacyPolicyView()
                     }
                 }
                 .sheet(isPresented: $showPollComposer) {
@@ -315,7 +313,6 @@ enum RoomRoute: Hashable {
     case dmThread(PeerID)
     case nicknameSettings
     case features
-    case privacyPolicy
 }
 #Preview {
     ContentView()

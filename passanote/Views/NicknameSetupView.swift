@@ -80,7 +80,7 @@ struct NicknameSetupView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            nickname = model.nickname
+            nickname = model.nicknameForSetup
         }
         .onChange(of: colorScheme) { _, scheme in
             guard sceneIsReady else { return }

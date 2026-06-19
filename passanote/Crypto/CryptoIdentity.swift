@@ -13,6 +13,7 @@ final class CryptoIdentity {
     private static let keychainAccount = "static-key"
     private static let peerIDDefaultsKey = "passanote.peerID"
     static let nicknameDefaultsKey = "passanote.nickname"
+    static let nicknameDraftDefaultsKey = "passanote.nickname.draft"
 
     let peerID: PeerID
     let staticKey: Curve25519.KeyAgreement.PrivateKey
@@ -21,9 +22,16 @@ final class CryptoIdentity {
         staticKey.publicKey.rawRepresentation
     }
 
+    /// Committed nickname — set when the user finishes the setup screen.
     var nickname: String {
         get { UserDefaults.standard.string(forKey: Self.nicknameDefaultsKey) ?? "" }
         set { UserDefaults.standard.set(newValue, forKey: Self.nicknameDefaultsKey) }
+    }
+
+    /// In-progress nickname while typing; autosaved without starting Bluetooth.
+    var nicknameDraft: String {
+        get { UserDefaults.standard.string(forKey: Self.nicknameDraftDefaultsKey) ?? "" }
+        set { UserDefaults.standard.set(newValue, forKey: Self.nicknameDraftDefaultsKey) }
     }
 
     private init() {

@@ -13,6 +13,9 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             model.isAppActive = (phase == .active)
+            if phase == .active {
+                model.refreshBluetoothState()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
             model.mesh.sendLeave()

@@ -49,6 +49,7 @@ final class ChatViewModel {
             if !skipNotificationPrompt {
                 requestNotificationAuthorization()
             }
+            refreshBluetoothState()
         }
     }
 
@@ -84,19 +85,27 @@ final class ChatViewModel {
     }
     #endif
 
-    /// Persist the nickname locally without announcing — used while the user
-    /// is typing in the setup field so we don't spam the mesh per keystroke.
+    /// Persist draft nickname while typing — does not commit or start Bluetooth.
     func updateNickname(_ name: String) {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        CryptoIdentity.shared.nickname = trimmed
-        hasNickname = !trimmed.isEmpty
+        CryptoIdentity.shared.nicknameDraft = name
     }
 
     /// Commit the nickname and announce when the mesh is already running.
     func setNickname(_ name: String) {
-        updateNickname(name)
-        guard hasNickname, mesh.isRunning else { return }
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        CryptoIdentity.shared.nickname = trimmed
+        CryptoIdentity.shared.nicknameDraft = trimmed
+        hasNickname = true
+        guard mesh.isRunning else { return }
         mesh.announce()
+    }
+
+    /// Text to pre-fill the nickname field: draft if present, else committed name.
+    var nicknameForSetup: String {
+        let draft = CryptoIdentity.shared.nicknameDraft
+        if !draft.isEmpty { return draft }
+        return CryptoIdentity.shared.nickname
     }
 
     /// Called after the nickname setup screen dismisses. First-time users see
@@ -106,6 +115,12 @@ final class ChatViewModel {
         mesh.start()
         mesh.announce()
         requestNotificationAuthorization()
+        refreshBluetoothState()
+    }
+
+    /// Re-sync Bluetooth UI after permission changes or returning to the app.
+    func refreshBluetoothState() {
+        mesh.refreshBluetoothState()
     }
 
     private func requestNotificationAuthorization() {
@@ -116,19 +131,29 @@ final class ChatViewModel {
     }
 
     /// Handles taps on the Bluetooth banner:
-    /// - if denied/restricted, deep-link to app settings so the user can allow it
-    /// - otherwise, nudge the mesh stack to continue initialization/announce
+    /// - not determined → start mesh to surface the system prompt
+    /// - denied/restricted → open Settings
+    /// - allowed → refresh state and resume scanning/advertising
     func handleBluetoothPermissionAction() {
-        if bluetoothState == .unauthorized {
+        switch CBCentralManager.authorization {
+        case .denied, .restricted:
             guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else { return }
             if UIApplication.shared.canOpenURL(settingsURL) {
                 UIApplication.shared.open(settingsURL)
             }
-            return
+        case .notDetermined, .allowedAlways:
+            fallthrough
+        @unknown default:
+            if !mesh.isRunning {
+                mesh.start()
+            }
+            mesh.announce()
+            refreshBluetoothState()
+            Task {
+                try? await Task.sleep(for: .milliseconds(400))
+                refreshBluetoothState()
+            }
         }
-
-        mesh.start()
-        mesh.announce()
     }
 
     // MARK: - Room sending
